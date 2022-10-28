@@ -1,4 +1,5 @@
 import tkinter as tk
+import datetime
 
 # CONSTANTS
 WINDOW_WIDTH = 400
@@ -150,17 +151,20 @@ class App(tk.Frame):
         """
         # Create favorites table if it does not alread exist
         self.cursor.execute('''CREATE TABLE IF NOT EXISTS 'favorites'
-            (verse CHAR(30), text MEDIUMTEXT)''')
+            (verse CHAR(30), text MEDIUMTEXT, date DATETIME)''')
 
         # Add verse and text to the favorites table 
         fs_reference = self.reference.get()
         values = (fs_reference,)
-        try:
-            fs_text = self.cursor.execute("SELECT text FROM 'Book of Mormon' WHERE verse=?", values).fetchone()[0]
-            values = (fs_reference, fs_text)
-            self.cursor.execute("INSERT INTO 'favorites' VALUES (?, ?)", values)
-        except:
-            print("Verse not found in database")
+
+        date_and_time = datetime.datetime.now()
+        print(date_and_time)
+        # try:
+        fs_text = self.cursor.execute("SELECT text FROM 'Book of Mormon' WHERE verse=?", values).fetchone()[0]
+        values = (fs_reference, fs_text, date_and_time)
+        self.cursor.execute("INSERT INTO 'favorites' VALUES (?, ?, ?)", values)
+        # except:
+        #     print("Verse not found in database")
 
     def delete_fs(self):
         """
@@ -180,7 +184,7 @@ class App(tk.Frame):
         """
         # Clear the canvas
         self.canvas.delete("all")
-        verses = self.cursor.execute("SELECT * FROM 'favorites'").fetchall()
+        verses = self.cursor.execute("SELECT * FROM 'favorites' ORDER BY date DESC").fetchall()
         verses_text = ""
         for verse in verses:
             verses_text += f'{verse}\n'
