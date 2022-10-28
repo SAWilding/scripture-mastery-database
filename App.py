@@ -159,12 +159,12 @@ class App(tk.Frame):
 
         date_and_time = datetime.datetime.now()
         print(date_and_time)
-        # try:
-        fs_text = self.cursor.execute("SELECT text FROM 'Book of Mormon' WHERE verse=?", values).fetchone()[0]
-        values = (fs_reference, fs_text, date_and_time)
-        self.cursor.execute("INSERT INTO 'favorites' VALUES (?, ?, ?)", values)
-        # except:
-        #     print("Verse not found in database")
+        try:
+            fs_text = self.cursor.execute("SELECT text FROM 'Book of Mormon' WHERE verse=?", values).fetchone()[0]
+            values = (fs_reference, fs_text, date_and_time)
+            self.cursor.execute("INSERT INTO 'favorites' VALUES (?, ?, ?)", values)
+        except:
+            print("Verse not found in database")
 
     def delete_fs(self):
         """
